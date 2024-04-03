@@ -1,8 +1,35 @@
 import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
 import { posts, goToPage } from "../index.js";
+import { formatDistanceToNow } from "date-fns";
 
 export function renderPostsPageComponent({ appEl }) {
+  const postList = ({ createdAt, description, imageUrl, likes, user }) => `
+  <li class="post">
+    <div class="post-header" data-user-id="${user.id}">
+        <img src="${user.imageUrl}" class="post-header__user-image">
+        <p class="post-header__user-name">${user.name}</p>
+    </div>
+    <div class="post-image-container">
+      <img class="post-image" src="${imageUrl}">
+    </div>
+    <div class="post-likes">
+      <button data-post-id="642d00579b190443860c2f32" class="like-button">
+        <img src="./assets/images/like${isLiked ? "-active" : ""}.svg">
+      </button>
+      <p class="post-likes-text">
+        Нравится: <strong>${likes.length}</strong>
+      </p>
+    </div>
+    <p class="post-text">
+      <span class="user-name">Иван Иваныч</span>
+      ${description}
+    </p>
+    <p class="post-date">
+    ${formatDistanceToNow(new Date(createdAt))}
+    </p>
+  </li>`;
+
   // TODO: реализовать рендер постов из api
   console.log("Актуальный список постов:", posts);
 
@@ -14,30 +41,7 @@ export function renderPostsPageComponent({ appEl }) {
               <div class="page-container">
                 <div class="header-container"></div>
                 <ul class="posts">
-                  <li class="post">
-                    <div class="post-header" data-user-id="642d00329b190443860c2f31">
-                        <img src="https://www.imgonline.com.ua/examples/bee-on-daisy.jpg" class="post-header__user-image">
-                        <p class="post-header__user-name">Иван Иваныч</p>
-                    </div>
-                    <div class="post-image-container">
-                      <img class="post-image" src="https://www.imgonline.com.ua/examples/bee-on-daisy.jpg">
-                    </div>
-                    <div class="post-likes">
-                      <button data-post-id="642d00579b190443860c2f32" class="like-button">
-                        <img src="./assets/images/like-active.svg">
-                      </button>
-                      <p class="post-likes-text">
-                        Нравится: <strong>2</strong>
-                      </p>
-                    </div>
-                    <p class="post-text">
-                      <span class="user-name">Иван Иваныч</span>
-                      Ромашка, ромашка...
-                    </p>
-                    <p class="post-date">
-                      19 минут назад
-                    </p>
-                  </li>
+                  
                   <li class="post">
                     <div class="post-header" data-user-id="6425602ce156b600f7858df2">
                         <img src="https://storage.yandexcloud.net/skypro-webdev-homework-bucket/1680601502867-%25C3%2590%25C2%25A1%25C3%2590%25C2%25BD%25C3%2590%25C2%25B8%25C3%2590%25C2%25BC%25C3%2590%25C2%25BE%25C3%2590%25C2%25BA%2520%25C3%2591%25C2%258D%25C3%2590%25C2%25BA%25C3%2591%25C2%2580%25C3%2590%25C2%25B0%25C3%2590%25C2%25BD%25C3%2590%25C2%25B0%25202023-04-04%2520%25C3%2590%25C2%25B2%252014.04.29.png" class="post-header__user-image">

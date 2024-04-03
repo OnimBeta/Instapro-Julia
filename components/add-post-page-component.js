@@ -4,15 +4,16 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
     const appHtml = `
     <div class="page-container">
       <div class="header-container"></div>
-      <form>
-        <label for="description">Описание:</label>
-        <textarea id="description" name="description"></textarea>
-        <label for="imageUrl">URL изображения:</label>
-        <input type="url" id="imageUrl" name="imageUrl" />
-        <button class="button" id="add-button">Добавить</button>
-      </form>
-      <button class="button" id="add-button">Добавить</button>
-    </div>
+      <div class="form">
+        <h3 class="form-title"> Вход в&nbsp;Instapro <h3>
+          <div class="form-inputs">
+            <input type="text" id="login-input" class="input" placeholder="Логин">
+            <input type="password" id="password-input" class="input" placeholder="Пароль">
+              <div class="form-error"></div>
+          <button class="button" id="add-button">Добавить</button>
+          </div>
+       </div>
+       </div>    
   `;
 
     appEl.innerHTML = appHtml;
