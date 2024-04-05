@@ -1,4 +1,4 @@
-import { getPosts } from "./api.js";
+import { getPosts, createPost } from "./api.js";
 import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
 import { renderAuthPageComponent } from "./components/auth-page-component.js";
 import {
@@ -118,9 +118,10 @@ const renderApp = () => {
     return renderAddPostPageComponent({
       appEl,
       onAddPostClick({ description, imageUrl }) {
-        // TODO: реализовать добавление поста в API
+        createPost({ description, imageUrl }).then(() => {
+          goToPage(POSTS_PAGE);
+        });
         console.log("Добавляю пост...", { description, imageUrl });
-        goToPage(POSTS_PAGE);
       },
     });
   }
