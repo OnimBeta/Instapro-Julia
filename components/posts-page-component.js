@@ -65,3 +65,23 @@ export function renderPostsPageComponent({ appEl }) {
     });
   }
 }
+
+// const initLikesListeners = ({ ?comments }, { ?renderComments }) => {
+  const likeButtonsElements = document.querySelectorAll('.like-button');
+  for (const likeButtonElement of likeButtonsElements) {
+      likeButtonElement.addEventListener('click', (event) => {
+          event.stopPropagation();
+          if (!isAuth) {
+              alert('Пожалуйста, зарегестрируйтесь или войдите в аккаунт');
+              return;
+          }
+          const index = likeButtonElement.dataset.index;
+          const post = posts[index];
+          post.likes = post.isLiked
+              ? post.likes - 1
+              : post.likes + 1;
+          post.isLiked = !post.isLiked;
+          renderComments({ posts });
+      });
+  }
+// };

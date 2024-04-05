@@ -1,4 +1,5 @@
 import { renderUploadImageComponent } from "./upload-image-component.js";
+import { renderHeaderComponent } from "./header-component.js";
 
 export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
   const render = () => {
@@ -6,14 +7,6 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
     const appHtml = `
     <div class="page-container">
       <div class="header-container">
-  <div class="page-header">
-      <h1 class="logo">instapro</h1>
-      <button class="header-button add-or-login-button">
-      <div title="Добавить пост" class="add-post-sign"></div>
-      </button>
-      <button title="Админ" class="header-button logout-button">Выйти</button>  
-      
-  </div>
   
 </div>
       <div class="form">
@@ -32,7 +25,7 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
 </div>
           <label>
             Опишите фотографию:
-            <input type="textarea" id="description" class="input textarea" rows="4"></textarea>
+            <textarea id="description" class="input textarea" rows="4"></textarea>
             </label>
           <button class="button" id="add-button">Добавить</button>
           </div>
@@ -41,24 +34,31 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
   `;
 
     appEl.innerHTML = appHtml;
-    let imgUrl = "";
+    let imageUrl = "";
+
+    renderHeaderComponent({
+      element: document.querySelector(".header-container"),
+    });
 
     renderUploadImageComponent({
       element: document.querySelector(".upload-image-container"),
-      onImageUrlChange: (imageUrl) => {
-        imgUrl = imageUrl;
+      onImageUrlChange: (imgUrl) => {
+        imageUrl = imgUrl;
       },
     });
 
     document.getElementById("add-button").addEventListener("click", () => {
       const description = document.getElementById("description")?.value;
-      console.log(document.getElementById("imageUrl"));
-      const imageUrl = document.getElementById("imageUrl")?.value;
-      console.log(document.getElementById("imageUrl")?.value);
-      onAddPostClick({
-        description,
-        imageUrl: imgUrl,
-      });
+      if (!description) {
+        alert("Не заполнено описание фото");
+      } else if (!imageUrl) {
+        alert("Не указано фото");
+      } else {
+        onAddPostClick({
+          description,
+          imageUrl,
+        });
+      }
     });
   };
 
