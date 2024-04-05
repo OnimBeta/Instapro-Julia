@@ -20,6 +20,7 @@ export function renderHeaderComponent({ element }) {
   </div>
   
 `;
+// console.log(user);
 
   element
     .querySelector(".add-or-login-button")
