@@ -1,15 +1,13 @@
 // Замени на свой, чтобы получить независимый от других набор данных.
 // "боевая" версия инстапро лежит в ключе prod
-const personalKey = "JuliaXmas";
+const prodKey = 'prod'
+const personalKey = "alexandrovaJulia";
 const baseHost = "https://webdev-hw-api.vercel.app";
 const postsHost = `${baseHost}/api/v1/${personalKey}/instapro`;
 
-export function getPosts({ token }) {
+export function getPosts() {
   return fetch(postsHost, {
     method: "GET",
-    headers: {
-      Authorization: token,
-    },
   })
     .then((response) => {
       if (response.status === 401) {
@@ -21,6 +19,16 @@ export function getPosts({ token }) {
     .then((data) => {
       return data.posts;
     });
+}
+
+export function getUserPosts({userId}) {
+  return fetch(postsHost + `/user-posts/${userId}` , {
+      method: "GET",
+  }).then((response) => {
+    return response.json();
+  }).then((data) => {
+    return data.posts
+  })
 }
 
 // https://github.com/GlebkaF/webdev-hw-api/blob/main/pages/api/user/README.md#%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%D1%81%D1%8F
@@ -69,17 +77,52 @@ export function uploadImage({ file }) {
   });
 }
 
-export function createPost({ description, imageUrl }) {
-  return fetch(baseHost, {
+export function createPost({ description,imageUrl,token }) {
+  return fetch(postsHost, {
     method: "POST",
     body: JSON.stringify({
       description,
-      imageUrl,
+      imageUrl 
     }),
+    headers: {
+      Authorization: token,
+    },
   }).then((response) => {
-    if (response.status === 400) {
+    if (response.status != 201) {
       throw new Error("Не удалось создать пост");
     }
     return response.json();
+  });
+}
+
+export function addLike({token , postId}) {
+  return fetch(postsHost + `/${postId}/like`, {
+    method: "POST",
+    headers: {
+      Authorization: token,
+    },
+  }).then((response) => {
+    if (response.status != 200) {
+      throw new Error("Не удалось поставить лайк");
+    }
+    return response.json();
+  }).catch((e) => {
+    alert(e)
+  });
+}
+
+export function removeLike({token , postId}) {
+  return fetch(postsHost + `/${postId}/dislike`, {
+    method: "POST",
+    headers: {
+      Authorization: token,
+    },
+  }).then((response) => {
+    if (response.status != 200) {
+      throw new Error("Не удалось удалить лайк");
+    }
+    return response.json();
+  }).catch((e) => {
+    alert(e)
   });
 }

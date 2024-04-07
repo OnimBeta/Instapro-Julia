@@ -1,4 +1,4 @@
-import { getPosts, createPost } from "./api.js";
+import { getPosts, createPost, getUserPosts } from "./api.js";
 import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
 import { renderAuthPageComponent } from "./components/auth-page-component.js";
 import {
@@ -31,6 +31,34 @@ export const logout = () => {
   goToPage(POSTS_PAGE);
 };
 
+const handleGetPosts = (data = {}) => {
+
+  if ( data?.userId ) {
+    return getUserPosts({userId: data.userId})
+    .then((newPosts) => {
+      page = USER_POSTS_PAGE;
+      posts = newPosts;
+      renderApp();
+    })
+    .catch((error) => {
+      console.error(error);
+      goToPage(USER_POSTS_PAGE, data);
+    });
+
+  }
+
+  return getPosts()
+  .then((newPosts) => {
+    page = POSTS_PAGE;
+    posts = newPosts;
+    renderApp();
+  })
+  .catch((error) => {
+    console.error(error);
+    goToPage(POSTS_PAGE);
+  });
+}
+
 /**
  * Включает страницу приложения
  */
@@ -53,33 +81,12 @@ export const goToPage = (newPage, data) => {
     if (newPage === POSTS_PAGE) {
       page = LOADING_PAGE;
       renderApp();
-
-      return getPosts({ token: getToken() })
-        .then((newPosts) => {
-          page = POSTS_PAGE;
-          posts = newPosts;
-          renderApp();
-        })
-        .catch((error) => {
-          console.error(error);
-          goToPage(POSTS_PAGE);
-        });
+      handleGetPosts()
     }
 
     if (newPage === USER_POSTS_PAGE) {
-      // TODO: реализовать получение постов юзера из API
-      console.log("Открываю страницу пользователя: ", data.userId);
       page = USER_POSTS_PAGE;
-      return getUserPosts(data.userId)
-        .then((newPosts) => {
-          page = USER_POSTS_PAGE;
-          posts = newPosts;
-          renderApp();
-        })
-        .catch((error) => {
-          console.error(error);
-          goToPage(USER_POSTS_PAGE, data);
-        });
+      handleGetPosts(data)
     }
 
     page = newPage;
@@ -117,25 +124,33 @@ const renderApp = () => {
   if (page === ADD_POSTS_PAGE) {
     return renderAddPostPageComponent({
       appEl,
-      onAddPostClick({ description, imageUrl }) {
-        createPost({ description, imageUrl }).then(() => {
-          goToPage(POSTS_PAGE);
-        });
-        console.log("Добавляю пост...", { description, imageUrl });
+      onAddPostClick(data) {
+        createPost(data)
+        .then((response) => {
+          if (response.status === 401) {
+            goToPage(AUTH_PAGE);
+          } else {
+            goToPage(POSTS_PAGE);
+          }
+        })
       },
     });
   }
 
   if (page === POSTS_PAGE) {
     return renderPostsPageComponent({
-      appEl,
+      appEl, 
+      posts, 
+      onPostsChange: () => handleGetPosts()
     });
   }
 
   if (page === USER_POSTS_PAGE) {
-    // TODO: реализовать страницу фотографию пользвателя
-    appEl.innerHTML = "Здесь будет страница фотографий пользователя";
-    return;
+    return renderPostsPageComponent({
+      appEl, 
+      posts, 
+      onPostsChange: ({ user }) => handleGetPosts({userId: user.id})
+    })
   }
 };
 
